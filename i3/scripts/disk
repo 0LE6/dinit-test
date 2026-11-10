@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Copyright (C) 2014 Julien Bonjean <julien@bonjean.info>
+
+
+
+DIR="${DIR:-${instance:-${BLOCK_INSTANCE:-}}}"
+DIR="${DIR:-$HOME}"
+ALERT_LOW="${ALERT_LOW:-$1}"
+ALERT_LOW="${ALERT_LOW:-10}" # color will turn red under this value (default: 10%)
+
+LOCAL_FLAG="-l"
+if [ "$1" = "-n" ] || [ "$2" = "-n" ]; then
+    LOCAL_FLAG=""
+fi
+
+df -h -P $LOCAL_FLAG "$DIR" | awk -v alert_low=$ALERT_LOW '
+NR == 2 {
+	print $4
+
+	print $4
+
+	use=$5
+
+	exit 0
+}
+
+END {
+	gsub(/%$/,"",use)
+	if (100 - use < alert_low) {
+		print "#FF0000"
+	} else {
+		print "#ffffff"
+	}
+}
+'

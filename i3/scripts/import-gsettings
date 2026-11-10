@@ -1,0 +1,21 @@
+#!/bin/bash
+config="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-3.0/settings.ini"
+schema=org.gnome.desktop.interface
+
+[[ -r $config ]] || exit 0
+[[ $(gsettings list-schemas 2>/dev/null) == *"$schema"* ]] || exit 0
+
+while IFS='=' read -r key value; do
+    [[ -n $value ]] && gsettings set "$schema" "$key" "$value"
+done < <(awk '
+    /^\[/ {in_settings=($0 ~ /^\[Settings\][[:space:]]*$/)}
+    in_settings && /^[[:space:]]*gtk-(theme-name|icon-theme-name|cursor-theme-name|font-name)[[:space:]]*=/ {
+        sub(/^[[:space:]]*gtk-/, "")
+        sub(/[[:space:]]*=[[:space:]]*/, "=")
+        sub(/[[:space:]]+$/, "")
+        sub(/^theme-name=/, "gtk-theme=")
+        sub(/^icon-theme-name=/, "icon-theme=")
+        sub(/^cursor-theme-name=/, "cursor-theme=")
+        print
+    }
+' "$config")

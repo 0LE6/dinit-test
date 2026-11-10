@@ -1,0 +1,30 @@
+#!/bin/bash
+# Copyright (C) 2025 Johannes Kamprad
+# SPDX-License-Identifier: GPL-3.0-or-later
+set -o pipefail
+theme="$HOME/.config/rofi/power-profiles.rasi"
+args=()
+[[ -r $theme ]] && args=(-theme "$theme")
+
+rofi_menu() {
+    rofi "${args[@]}" "$@"
+}
+
+report() {
+    notify-send -a i3 'i3' "$1"
+}
+
+profiles=$(LC_ALL=C powerprofilesctl list 2>/dev/null | awk '
+    /^[[:space:]*]+(performance|balanced|power-saver):/ {
+        gsub(/^[[:space:]*]+|:$/, ""); print
+    }
+')
+[[ -n $profiles ]] || { report 'Perfiles de energía no disponibles'; exit 1; }
+active=$(powerprofilesctl get 2>/dev/null)
+selection=$(printf '%s\n' "$profiles" | rofi_menu -dmenu -i -no-custom -p "Perfil (${active:-?})") || exit 0
+case "$selection" in
+    performance|balanced|power-saver)
+        powerprofilesctl set "$selection" || { report 'No se pudo cambiar el perfil'; exit 1; }
+        report "Perfil activo: $selection"
+        ;;
+esac

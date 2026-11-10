@@ -1,0 +1,21 @@
+#!/bin/bash
+export LC_ALL=C
+sink=@DEFAULT_SINK@
+case "${button:-${BLOCK_BUTTON:-}}" in
+    3) pactl set-sink-mute "$sink" toggle ;;
+    4) "$HOME/.config/i3/scripts/volume_brightness.sh" volume_up 5 >/dev/null ;;
+    5) "$HOME/.config/i3/scripts/volume_brightness.sh" volume_down 5 >/dev/null ;;
+esac
+case "$(pactl get-sink-mute "$sink" 2>/dev/null)" in
+    'Mute: yes') icon= ;;
+    'Mute: no') icon= ;;
+    *) printf '%s\n' 'Audio —'; exit 0 ;;
+esac
+pactl get-sink-volume "$sink" 2>/dev/null | awk -v icon="$icon" '/^Volume:/ {
+    for (i=1; i<=NF; i++) if ($i ~ /^[0-9]+%$/) {
+        volume=$i+0
+        if (icon=="") icon=(volume>50 ? "" : (volume>0 ? "" : ""))
+        printf "%s %d%%\n", icon, volume
+        exit
+    }
+}'

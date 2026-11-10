@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+# Copyright (C) 2016 James Murphy
+# SPDX-License-Identifier: GPL-2.0-only
+
+from subprocess import run
+import os
+
+config = dict(os.environ)
+try:
+    result = run(["acpi"], capture_output=True, text=True, env={**os.environ, "LC_ALL": "C"})
+except FileNotFoundError:
+    print()
+    raise SystemExit(0)
+batteries = []
+for line in result.stdout.splitlines():
+    fields = line.partition(": ")[2].split(", ")
+    if len(fields) >= 2 and fields[1].removesuffix("%").isdigit():
+        batteries.append((fields[0], int(fields[1].removesuffix("%"))))
+
+if not batteries:
+    print()
+    raise SystemExit(0)
+
+state = batteries[0][0]
+percentleft = sum(percent for _, percent in batteries) // len(batteries)
+
+color = config.get("color_charging", "yellow")
+FA_LIGHTNING = "<span color='{}'><span font='Symbols Nerd Font'>\uf0e7</span></span>".format(color)
+
+FA_PLUG = "<span font='Symbols Nerd Font'>\uf1e6</span>"
+
+FA_BATTERY = "<span font='Symbols Nerd Font'>\uf240</span>"
+
+FA_QUESTION = "<span font='Symbols Nerd Font'>\uf128</span>"
+
+if state == "Discharging":
+    fulltext = FA_BATTERY + " "
+elif state in ("Full", "Not charging"):
+    fulltext = FA_PLUG + " "
+
+elif state == "Unknown":
+    fulltext = FA_QUESTION + " " + FA_BATTERY + " "
+
+else:
+    fulltext = FA_LIGHTNING + " " + FA_PLUG + " "
+
+def color(percent):
+    if percent < 10:
+        return config.get("color_10", "#FFFFFF")
+    if percent < 20:
+        return config.get("color_20", "#FF3300")
+    if percent < 30:
+        return config.get("color_30", "#FF6600")
+    if percent < 40:
+        return config.get("color_40", "#FF9900")
+    if percent < 50:
+        return config.get("color_50", "#FFCC00")
+    if percent < 60:
+        return config.get("color_60", "#FFFF00")
+    if percent < 70:
+        return config.get("color_70", "#FFFF33")
+    if percent < 80:
+        return config.get("color_80", "#FFFF66")
+    return config.get("color_full", "#FFFFFF")
+
+form =  '<span color="{}">{}%</span>'
+fulltext += form.format(color(percentleft), percentleft)
+
+print(fulltext)
+print(fulltext)
+if percentleft < 10:
+    raise SystemExit(33)

@@ -1,0 +1,41 @@
+Super = tecla Windows
+F1 · Buscar atajos
+Super+Enter · Abrir Alacritty
+Super+Q · Cerrar la ventana enfocada
+Super+Espacio · Abrir el menú de aplicaciones
+Super+T · Buscar ventanas abiertas
+Super+C · Historial del portapapeles (Greenclip)
+Super+W · Abrir Firefox
+Super+B · Abrir Brave con escala 1,2
+Super+N · Abrir Thunar
+Super+L · Bloquear la sesión
+Super+Mayús+E · Abrir el menú de energía
+Super+Mayús+P · Cambiar el perfil de energía
+Super+Mayús+C · Recargar la configuración
+Super+Mayús+R · Reiniciar i3 dentro de la sesión
+Super+Tab / Super+Mayús+Tab · Espacio siguiente / anterior
+Super+D · Alternar entre los dos últimos espacios
+Super+1…0 · Ir al espacio 1…10 (también teclado numérico)
+Super+Mayús+1…0 · Mover la ventana al espacio 1…10 (también teclado numérico)
+Super+Mayús+N · Abrir el primer espacio numerado libre
+Super+Flechas · Cambiar el foco
+Super+Mayús+Flechas · Mover la ventana
+Super+H / Super+V · División horizontal / vertical
+Super+F · Alternar pantalla completa
+Super+S / Super+G / Super+E · Apilado / pestañas / alternar división
+Super+Mayús+Espacio · Alternar ventana flotante
+Super+A · Enfocar el contenedor padre
+Super+Arrastrar con botón izquierdo / derecho · Mover / redimensionar
+Super+P · Cambiar a la siguiente salida de audio
+Volumen +/- · Subir / bajar 1 punto porcentual
+Super+Volumen +/- · Subir / bajar 1 punto porcentual
+Silenciar audio / micrófono · Alternar silencio de la salida / entrada predeterminada
+Teclas de reproducción · Reproducir o pausar / siguiente / anterior
+Brillo +/- · Subir / bajar 5 puntos porcentuales
+Impr Pant · Guardar una captura completa en tu carpeta personal
+Super+Mayús+S · Seleccionar una zona con Flameshot
+Clic en el reloj · Calendario
+Clic izquierdo en ♪ /  /  · Mezclador / perfiles / energía
+Volumen en la barra · Clic derecho para silenciar, rueda para ajustar 5 puntos
+Bluetooth en la barra · Clic izquierdo para abrir el menú si está instalado
+Red en la barra · Clic izquierdo para el menú, derecho para el editor de NetworkManager

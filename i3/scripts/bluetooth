@@ -1,0 +1,17 @@
+#!/bin/bash
+command -v bluetoothctl >/dev/null || { printf '\n'; exit 0; }
+
+case "${button:-${BLOCK_BUTTON:-}}" in
+    1)
+        if command -v rofi-bluetooth >/dev/null; then
+            rofi-bluetooth >/dev/null 2>&1 &
+        else
+            notify-send -a i3 'Bluetooth' 'Instala rofi-bluetooth-git para abrir el menú' >/dev/null 2>&1 &
+        fi
+        ;;
+esac
+case "$(LC_ALL=C timeout 2s bluetoothctl show 2>/dev/null | awk '/^[[:space:]]*Powered:/ {print $2; exit}')" in
+    yes) printf '%s\n' '󰂯' ;;
+    no) printf '%s\n' '󰂲' ;;
+    *) printf '\n' ;;
+esac

@@ -1,0 +1,7 @@
+#!/bin/bash
+case "$(powerprofilesctl get 2>/dev/null)" in
+    performance) printf '%s\n' 'Rendimiento' ;;
+    balanced) printf '%s\n' 'Equilibrado' ;;
+    power-saver) printf '%s\n' 'Ahorro' ;;
+    *) printf '\n' ;;
+esac

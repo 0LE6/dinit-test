@@ -1,0 +1,31 @@
+#!/bin/bash
+case "${button:-${BLOCK_BUTTON:-}}" in
+    1)
+        if command -v networkmanager_dmenu >/dev/null; then
+            networkmanager_dmenu >/dev/null 2>&1 &
+        elif command -v nm-connection-editor >/dev/null; then
+            nm-connection-editor >/dev/null 2>&1 &
+        fi
+        ;;
+    3)
+        if command -v nm-connection-editor >/dev/null; then
+            nm-connection-editor >/dev/null 2>&1 &
+        fi
+        ;;
+esac
+
+if command -v nmcli >/dev/null; then
+    ssid=$(nmcli -t -e no -f IN-USE,SSID device wifi list --rescan no 2>/dev/null |
+        awk '/^\*:/ {print substr($0,3); exit}')
+    if [[ -n $ssid ]]; then
+        printf '  %s\n' "$ssid"
+        exit 0
+    fi
+fi
+
+{
+    ip -o -4 route show default 2>/dev/null
+    ip -o -6 route show default 2>/dev/null
+} | awk '{for (i=1; i<NF; i++) if ($i=="dev") {
+    print "Red " $(i+1); found=1; exit
+}} END {if (!found) print "󰤭"}'

@@ -1,0 +1,39 @@
+#!/usr/bin/env sh
+
+WIDTH=${WIDTH:-200}
+HEIGHT=${HEIGHT:-200}
+DATEFMT=${DATEFMT:-"+%d.%m.%Y %H:%M:%S"}
+
+OPTIND=1
+
+while getopts ":f:W:H:" opt; do
+    case "$opt" in
+        f) DATEFMT=$OPTARG ;;
+        W) WIDTH=$OPTARG ;;
+        H) HEIGHT=$OPTARG ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument." >&2
+            exit 1
+            ;;
+    esac
+done
+
+case "${button:-${BLOCK_BUTTON:-}}" in
+    1|2|3)
+        yad --calendar \
+            --width="$WIDTH" \
+            --height="$HEIGHT" \
+            --undecorated \
+            --fixed \
+            --close-on-unfocus \
+            --no-buttons \
+            --mouse \
+            >/dev/null 2>&1 &
+        ;;
+esac
+
+date "$DATEFMT"

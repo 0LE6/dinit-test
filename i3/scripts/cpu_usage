@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Copyright 2014 Pierre Mavro <deimos@deimos.fr>
+# Copyright 2014 Vivien Didelot <vivien@didelot.org>
+# Copyright 2014 Andreas Guldstrand <andreas.guldstrand@gmail.com>
+#
+# Licensed under the terms of the GNU GPL v3, or any later version.
+
+export LC_ALL=C
+{ head -n 1 /proc/stat; sleep 0.25; head -n 1 /proc/stat; } |
+    awk -v warn="${T_WARN:-50}" -v crit="${T_CRIT:-80}" '
+        {
+            total=0
+            for (i=2; i<=9; i++) total+=$i
+            idle=$5+$6
+            if (NR==2 && total>previous) {
+                usage=100*(1-(idle-old_idle)/(total-previous))
+                printf "%.0f%%\n%.0f%%\n", usage, usage
+                if (usage>=crit) {print "#ff0000"; exit 33}
+                if (usage>=warn) print "#fffc00"
+                else print "#ffffff"
+            }
+            previous=total
+            old_idle=idle
+        }
+    '

@@ -1,0 +1,33 @@
+#!/bin/bash
+# Copyright (C) 2025 Johannes Kamprad
+# SPDX-License-Identifier: GPL-3.0-or-later
+set -o pipefail
+theme="$HOME/.config/rofi/powermenu.rasi"
+args=()
+[[ -r $theme ]] && args=(-theme "$theme")
+
+rofi_menu() {
+    rofi "${args[@]}" "$@"
+}
+
+report() {
+    notify-send -a i3 'i3' "$1"
+}
+
+selection=$(printf '%s\n' Bloquear Suspender Hibernar 'Cerrar sesión' Reiniciar Apagar |
+    rofi_menu -dmenu -i -no-custom -p 'Energía') || exit 0
+case "$selection" in
+    Bloquear) loginctl lock-session ;;
+    Suspender) loginctl suspend ;;
+    Hibernar) loginctl hibernate ;;
+    'Cerrar sesión'|Reiniciar|Apagar)
+        confirmation=$(printf '%s\n' No Sí | rofi_menu -dmenu -no-custom -p "$selection") || exit 0
+        [[ $confirmation == Sí ]] || exit 0
+        case "$selection" in
+            'Cerrar sesión') i3-msg exit ;;
+            Reiniciar) loginctl reboot ;;
+            Apagar) loginctl poweroff ;;
+        esac
+        ;;
+    *) exit 0 ;;
+esac || { report "No se pudo ejecutar: $selection"; exit 1; }

@@ -1,0 +1,25 @@
+#!/bin/bash
+export LC_ALL=C
+# Copyright 2014 Pierre Mavro, Vivien Didelot, Andreas Guldstrand and Benjamin Chretien
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+for hwmon in /sys/class/hwmon/hwmon*; do
+    [[ -r $hwmon/name ]] || continue
+    read -r driver < "$hwmon/name"
+    case "$driver" in
+        coretemp|k10temp|zenpower|cpu_thermal|k8temp)
+            for input in "$hwmon"/temp*_input; do
+                [[ -r $input ]] && cat "$input"
+            done
+            ;;
+    esac
+done | awk -v warn="${T_WARN:-70}" -v crit="${T_CRIT:-90}" '
+    /^-?[0-9]+$/ {if (!seen || $1>max) max=$1; seen=1}
+    END {
+        if (!seen) {print ""; exit}
+        temp=max/1000
+        printf " %.0f °C\n %.0f °C\n", temp, temp
+        if (temp>=crit) {print "#ff0000"; exit 33}
+        if (temp>=warn) print "#fffc00"
+        else print "#ffffff"
+    }'

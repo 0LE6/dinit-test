@@ -1,0 +1,11 @@
+#!/bin/bash
+set -o pipefail
+theme="$HOME/.config/rofi/rofikeyhint.rasi"
+args=()
+[[ -r $theme ]] && args=(-theme "$theme")
+
+rofi_menu() {
+    rofi "${args[@]}" "$@"
+}
+
+rofi_menu -dmenu -i -p "Atajos de i3" < "$HOME/.config/i3/keybindings"

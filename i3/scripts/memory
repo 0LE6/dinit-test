@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Copyright (C) 2014 Julien Bonjean <julien@bonjean.info>
+
+
+
+TYPE="${instance:-${BLOCK_INSTANCE:-mem}}"
+
+awk -v type="$TYPE" '
+/^MemTotal:/ {
+	mem_total=$2
+}
+/^MemFree:/ {
+	mem_free=$2
+}
+/^MemAvailable:/ {
+	mem_available=$2
+}
+/^Buffers:/ {
+	mem_free+=$2
+}
+/^Cached:/ {
+	mem_free+=$2
+}
+/^SwapTotal:/ {
+	swap_total=$2
+}
+/^SwapFree:/ {
+	swap_free=$2
+}
+END {
+	if (type == "swap") {
+		free=swap_free/1024/1024
+		used=(swap_total-swap_free)/1024/1024
+		total=swap_total/1024/1024
+	} else {
+		if (mem_available) mem_free=mem_available
+		free=mem_free/1024/1024
+		used=(mem_total-mem_free)/1024/1024
+		total=mem_total/1024/1024
+	}
+
+	pct=0
+	if (total > 0) {
+		pct=used/total*100
+	}
+
+	printf("%02.f%%\n%02.f%%\n", pct, pct)
+	color="#ffffff"
+
+	if (pct > 90) {
+		color="#FF0000"
+	} else if (pct > 80) {
+		color="#FFAE00"
+	} else if (pct > 70) {
+		color="#FFF600"
+	}
+	print color
+}
+' /proc/meminfo

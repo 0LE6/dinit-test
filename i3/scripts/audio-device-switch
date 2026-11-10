@@ -1,0 +1,23 @@
+#!/bin/bash
+# Basado en el script de kbravh (gist 9d04a10ae925074536047ae8100c6b0dbfc303d6).
+export LC_ALL=C
+current=$(pactl get-default-sink) || exit 1
+sinks=$(pactl list short sinks) || exit 1
+next=$(awk -v current="$current" '
+    NR == 1 {first = $2}
+    after {print $2; found = 1; exit}
+    $2 == current {after = 1}
+    END {if (!found && first != "") print first}
+' <<< "$sinks")
+if [[ -z $next || $next == "$current" ]]; then
+    notify-send -a i3 'Audio' 'No hay otra salida disponible'
+    exit 0
+fi
+pactl set-default-sink "$next" || exit 1
+while IFS=$'\t' read -r stream _; do
+    [[ $stream =~ ^[0-9]+$ ]] && pactl move-sink-input "$stream" "$next" 2>/dev/null
+done < <(pactl list short sink-inputs)
+description=$(pactl -f json list sinks | jq -r --arg name "$next" '
+    .[] | select(.name == $name) | .description
+')
+notify-send -a i3 'Salida de audio' "${description:-$next}"

@@ -1,0 +1,51 @@
+#!/bin/bash
+case "${1-}" in
+    wallpaper)
+        for image in "$HOME/.config/i3/wallpaper.jpg" "$HOME/.config/i3/wallpaper.png"; do
+            if [[ -r $image ]] && command -v feh >/dev/null && feh --no-fehbg --bg-fill "$image"; then
+                exit 0
+            fi
+        done
+        exec xsetroot -solid '#08052b'
+        ;;
+    polkit)
+        exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+        ;;
+    clipboard_daemon)
+        if command -v greenclip >/dev/null && ! pgrep -u "$UID" -x greenclip >/dev/null; then
+            exec greenclip daemon
+        fi
+        ;;
+    apps|windows|clipboard)
+        args=()
+        theme="$HOME/.config/rofi/rofidmenu.rasi"
+        if [[ -r $theme && $1 != clipboard ]]; then
+            args=(-config "$theme")
+        fi
+        case "$1" in
+            apps) exec rofi "${args[@]}" -show drun ;;
+            windows) exec rofi "${args[@]}" -show window ;;
+            clipboard)
+                if command -v greenclip >/dev/null; then
+                    exec rofi -modi 'clipboard:greenclip print' -show clipboard
+                fi
+                notify-send -a i3 'Portapapeles' 'Instala rofi-greenclip para usar el historial'
+                ;;
+        esac
+        ;;
+    brave)
+        for browser in brave brave-browser; do
+            if command -v "$browser" >/dev/null; then
+                exec "$browser" --force-device-scale-factor=1.2
+            fi
+        done
+        notify-send -a i3 'Brave' 'Instala brave-bin para usar este atajo'
+        ;;
+    screenshot)
+        file="$HOME/$(date +%Y-%m-%d-%H:%M:%S-%N)-screenshot.png"
+        if scrot "$file"; then
+            notify-send -a i3 'Captura guardada' "$file"
+        fi
+        ;;
+    *) exit 2 ;;
+esac

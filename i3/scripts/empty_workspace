@@ -1,0 +1,10 @@
+#!/bin/bash
+# Copyright (C) 2025 Johannes Kamprad
+# SPDX-License-Identifier: GPL-3.0-or-later
+set -o pipefail
+workspaces=$(i3-msg -t get_workspaces) || exit 1
+number=$(jq -er '
+    [.[].num | select(. > 0)] as $used
+    | first(range(1; 21) | select(. as $n | ($used | index($n)) == null))
+' <<< "$workspaces") || exit 0
+exec i3-msg "workspace --no-auto-back-and-forth number $number"

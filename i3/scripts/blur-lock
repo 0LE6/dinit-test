@@ -1,0 +1,18 @@
+#!/bin/bash
+color=08052b
+if [[ ! -v XSS_SLEEP_LOCK_FD ]] && command -v magick >/dev/null; then
+    directory=$(mktemp -d "${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/i3-lock.XXXXXXXX")
+    if [[ -n $directory ]]; then
+        trap 'rm -rf -- "$directory"' EXIT
+        if timeout 2s scrot -z "$directory/screen.png" &&
+            timeout 2s magick "$directory/screen.png" -blur 5x4 "PNG24:$directory/blur.png" &&
+            exec 9<"$directory/blur.png"; then
+            rm -rf -- "$directory"
+            trap - EXIT
+            exec i3lock -n -c "$color" -i /proc/self/fd/9
+        fi
+        rm -rf -- "$directory"
+        trap - EXIT
+    fi
+fi
+exec i3lock -n -c "$color"
