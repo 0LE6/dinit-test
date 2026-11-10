@@ -1,9 +1,5 @@
 # Migrar i3 de EndeavourOS a Artix Linux con dinit
 
-Esta guía corresponde a la configuración adaptada a partir de `i3(1).zip`, el segundo archivo enviado. Descarga [i3-artix-dinit.zip](https://chatgpt.com/library?file_id=libfile_aecc9ccde0e08191abf102ea4bc29514&account_id=personal) y guarda el ZIP junto a esta guía.
-
-El ZIP conserva la carpeta raíz `i3/`, los nombres de los archivos que siguen en uso y su orden relativo. De los 26 scripts originales, se conservaron 18, se retiraron 8 y se añadió uno.
-
 ## 1. Comprobar qué tienes instalado
 
 Ejecuta esto en Artix. `pacman -Q` consulta los paquetes instalados y `pacman -Si` consulta las bases locales de los repositorios configurados. Estos comandos son de solo lectura.
