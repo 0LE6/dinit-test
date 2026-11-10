@@ -222,3 +222,8 @@ Se validaron el ZIP, los permisos ejecutables y la configuración con `i3 -C` us
 Queda por comprobar en tu equipo el bloqueo real al suspender o hibernar, los permisos de brillo, la detección de sensores y los códigos del teclado numérico. Tras iniciar sesión, pulsa **Super+L**, desbloquea y luego suspende. Comprueba que al volver te pida contraseña.
 
 Referencias de la configuración y el bloqueo. [Guía de i3](https://i3wm.org/docs/userguide.html) · [Documentación de i3blocks](https://vivien.github.io/i3blocks/) · [Manual de xss-lock](https://man.archlinux.org/man/xss-lock.1) · [Manual de i3lock](https://man.archlinux.org/man/extra/i3lock/i3lock.1.en)
+
+---
+
+sudo pacman-key --verify pandoc-bin-3.13-1-x86_64.pkg.tar.zst.sig &&
+  sudo pacman -U ./pandoc-bin-3.13-1-x86_64.pkg.tar.zst
