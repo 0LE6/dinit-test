@@ -224,6 +224,8 @@ Queda por comprobar en tu equipo el bloqueo real al suspender o hibernar, los pe
 Referencias de la configuración y el bloqueo. [Guía de i3](https://i3wm.org/docs/userguide.html) · [Documentación de i3blocks](https://vivien.github.io/i3blocks/) · [Manual de xss-lock](https://man.archlinux.org/man/xss-lock.1) · [Manual de i3lock](https://man.archlinux.org/man/extra/i3lock/i3lock.1.en)
 
 ---
+https://pkgpool.artixlinux.org/repos/world-gremlins/os/x86_64/pandoc-bin-3.13-1-x86_64.pkg.tar.zst
 
+https://pkgpool.artixlinux.org/repos/world-gremlins/os/x86_64/pandoc-bin-3.13-1-x86_64.pkg.tar.zst.sig
 sudo pacman-key --verify pandoc-bin-3.13-1-x86_64.pkg.tar.zst.sig &&
   sudo pacman -U ./pandoc-bin-3.13-1-x86_64.pkg.tar.zst
